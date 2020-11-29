@@ -16,10 +16,11 @@ public class App
         else if (args.length > 0)
             Utils.zip(Utils.getFiles(args), System.out);
         else
-            System.out.println("Archiver. Archiving utility. Compresses and extracts files and folders using ZIP compression algorithm. Usage:");
-        System.out.println("In order to archive, specify space-delimited list of files or directories and redirect output to a file (zip extension is recommended), for example: ./archiver ./file1 ./file2 ./dir1 > archive.zip");
-        System.out.println("In order to extract, pipe output of a zip file to utility, for example: cat archive.zip | ./archiver");
-        System.out.println("All files and folders will be extracted to the current directory. Files with the same name will be overwritten.");
+            System.out.println("Archiver. Archiving utility. Compresses and extracts files and folders using ZIP compression algorithm. Usage:\n" +
+                    "To create zip archive add space-delimited list of files and folders and redirect output to a zip file.\n" +
+                    "To extract files from zip file, pipe zip file output to the archiver. Files and folders will be extracted into the current directory.\n"
+            );
+        System.out.println("");
     }
 
     static class Handler implements Thread.UncaughtExceptionHandler {
