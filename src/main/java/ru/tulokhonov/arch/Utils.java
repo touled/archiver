@@ -46,6 +46,8 @@ public class Utils {
                     throw new IllegalArgumentException(
                             String.format("Error! File or directory named \"%s\" does not exists. Please check the name and try again",
                                     file.getName()));
+                if (file.getPath().contains(".." + File.separator))
+                    throw new IllegalArgumentException("Error! Illegal file path");
                 if (file.isDirectory())
                     files.addAll(getAllFilesInDir(path));
                 else
