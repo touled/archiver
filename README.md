@@ -10,7 +10,7 @@ Simple Zip archiver. Compresses and extracts files and folders using ZIP compres
 
 1. Clone or download this repository
 2. Run `./mvnw package` to compile and package archiver
-2. Make archiver executable `chmod +x ./archiver`
+2. Make sure archiver is executable `chmod +x ./archiver`
 
 ## Archive
 
