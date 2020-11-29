@@ -42,7 +42,7 @@ public class UtilsTest {
         try (FileInputStream fis = new FileInputStream(zipFile)) {
             Utils.unZip(fis, target.resolve("unzipped"));
         }
-        // Trying to compare file sizes
+        // Comparing file sizes
         long unzippedFolderSize = Utils.getFolderSize(target.resolve("unzipped"));
         long sourceFilesSize = sourceFiles
                 .stream()

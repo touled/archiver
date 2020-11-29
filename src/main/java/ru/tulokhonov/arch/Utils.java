@@ -139,8 +139,8 @@ public class Utils {
     }
 
     /**
-     * Unzip file to current dir
-     * @param is File input stream
+     * Unzip data to current directory
+     * @param is Input stream
      */
     public static void unZip(InputStream is) {
         unZip(is, Paths.get("./"));

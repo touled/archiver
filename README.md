@@ -22,8 +22,8 @@ Example:
 
 ## Extract
 
-To extract files from zip file, pipe zip file output to the archiver. Files and folders will be extracted into the current directory.
+To extract files from zip file, pipe zip file output to archiver. Files and folders will be extracted into the current directory.
 
 Example:
 
-`$cat archive.zip > ./archiver`
+`$cat archive.zip | ./archiver`
