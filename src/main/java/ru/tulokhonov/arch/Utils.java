@@ -1,5 +1,8 @@
 package ru.tulokhonov.arch;
 
+import ru.tulokhonov.arch.exceptions.ArchivingException;
+import ru.tulokhonov.arch.exceptions.ExtractionException;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +58,7 @@ public class Utils {
      * Generates ZIP file and outputs it to output stream
      * @param files list of files or directories to be zipped
      * @param outputStream Output stream
-     * @throws RuntimeException if IOException occurs
+     * @throws ArchivingException if IOException occurs
      */
     public static void zip(List<File> files, OutputStream outputStream) {
         try (BufferedOutputStream bos = new BufferedOutputStream(outputStream);
@@ -75,7 +78,7 @@ public class Utils {
                    zos.putNextEntry(new ZipEntry(relative(file.getPath())));
             }
         } catch (IOException exception) {
-            throw new RuntimeException("Error creating archive!", exception);
+            throw new ArchivingException("Error creating archive!", exception);
         }
     }
 
@@ -83,14 +86,14 @@ public class Utils {
      * Extracts given Zip file from input stream to specified path
      * @param is Input stream
      * @param path extraction path
-     * @throws RuntimeException if content provided in input stream is not valid zip file or IOException occurs
+     * @throws ExtractionException if content provided in input stream is not valid zip file or IOException occurs
      */
     public static void unZip(InputStream is, Path path) {
         try (ZipInputStream zis = new ZipInputStream(is)) {
             ZipEntry zipEntry = zis.getNextEntry();
 
             if (zipEntry == null)
-                throw new RuntimeException("Invalid or empty zip file");
+                throw new IllegalArgumentException("Error! Invalid or empty zip file");
 
             while (zipEntry != null) {
                 slipProtect(zipEntry, path);
@@ -110,14 +113,14 @@ public class Utils {
                             fos.write(buffer, 0, bytesRead);
                         }
                     } catch (IOException exception) {
-                        throw new RuntimeException("Oops... Something went wrong while extracting", exception);
+                        throw new ExtractionException("Error extracting file", exception);
                     }
                 }
                 zipEntry = zis.getNextEntry();
             }
         }
         catch (IOException exception) {
-            throw new RuntimeException("Oops... Something went wrong!", exception);
+            throw new ExtractionException("Error extracting file!", exception);
         }
     }
 
@@ -134,7 +137,7 @@ public class Utils {
         File destinationFile = new File(target.toFile(), zipEntry.getName());
         String canonicalDestinationFile = destinationFile.getCanonicalPath();
         if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
-            throw new IOException("Error! Entry is outside of the target directory: " + zipEntry.getName());
+            throw new IOException("Error! Invalid entry in zip file: " + zipEntry.getName());
         }
     }
 
