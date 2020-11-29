@@ -3,13 +3,13 @@ Simple Zip archiver. Compresses and extracts files and folders using ZIP compres
 
 ## Prerequisites
 
-- JRE 8 or later
+- Java 1.8+
 - Shell
 
 ## Usage
 
 1. Clone or download this repository
-2. Run `./mvnw package` to compile and package archiver
+2. Run `./mvnw clean package` to compile and package archiver
 2. Make sure archiver is executable `chmod +x ./archiver`
 
 ### Archive

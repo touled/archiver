@@ -156,7 +156,7 @@ public class Utils {
      * @return relative path
      */
     static String relative(String path) {
-        return new File("./").toURI()
+        return new File("").toURI()
                 .relativize(new File(path).toURI()).getPath();
     }
 
