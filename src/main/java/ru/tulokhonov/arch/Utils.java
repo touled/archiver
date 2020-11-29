@@ -172,7 +172,7 @@ public class Utils {
      */
     static boolean pathContainsDirTraversal(Path path) {
         for (int i = 0; i < path.getNameCount(); i++) {
-            if (path.getName(i).toString().contains("..")) return true;
+            if (path.getName(i).toString().equals("..")) return true;
         }
         return false;
     }
