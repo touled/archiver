@@ -46,8 +46,8 @@ public class Utils {
                     throw new IllegalArgumentException(
                             String.format("Error! File or directory named \"%s\" does not exists. Please check the name and try again",
                                     file.getName()));
-                if (file.getPath().contains(".." + File.separator))
-                    throw new IllegalArgumentException("Error! Illegal file path");
+                if (pathContainsDirTraversal(file.toPath()))
+                    throw new IllegalArgumentException("Illegal file or directory name");
                 if (file.isDirectory())
                     files.addAll(getAllFilesInDir(path));
                 else
@@ -57,7 +57,7 @@ public class Utils {
     }
 
     /**
-     * Generates ZIP file and outputs it to output stream
+     * Generates ZIP file and writes it to output stream
      * @param files list of files or directories to be zipped
      * @param outputStream Output stream
      * @throws ArchivingException if IOException occurs
@@ -69,7 +69,8 @@ public class Utils {
             for (File file : files) {
                 if (file.isFile())
                     try (FileInputStream fis = new FileInputStream(file)) {
-                        zos.putNextEntry(new ZipEntry(relative(file.getPath())));
+                        ZipEntry zipEntry = new ZipEntry(getZipEntryName(file.toPath()));
+                        zos.putNextEntry(zipEntry);
                         byte[] bytes = new byte[1024];
                         int bytesRead;
                         while ((bytesRead = fis.read(bytes)) >= 0) {
@@ -77,7 +78,7 @@ public class Utils {
                         }
                     }
                 else if (file.isDirectory())
-                   zos.putNextEntry(new ZipEntry(relative(file.getPath())));
+                   zos.putNextEntry(new ZipEntry(getZipEntryName(file.toPath())));
             }
         } catch (IOException exception) {
             throw new ArchivingException("Error creating archive!", exception);
@@ -152,17 +153,6 @@ public class Utils {
     }
 
     /**
-     * Relativizes the given path against current directory
-     * Example: ./dir1/file1 -> dir1/file1
-     * @param path Path to a file or a folder
-     * @return relative path
-     */
-    static String relative(String path) {
-        return new File("").toURI()
-                .relativize(new File(path).toURI()).getPath();
-    }
-
-    /**
      * Returns folder size in bytes
      * @param folder Path to the folder
      * @return folder size in bytes
@@ -173,5 +163,33 @@ public class Utils {
                 .filter(p -> p.toFile().isFile())
                 .mapToLong(p -> p.toFile().length())
                 .sum();
+    }
+
+    /**
+     * Check if path contains directory traversal signs
+     * @param path Path
+     * @return true if path contains directory traversal signs or false otherwise
+     */
+    static boolean pathContainsDirTraversal(Path path) {
+        for (int i = 0; i < path.getNameCount(); i++) {
+            if (path.getName(i).toString().contains("..")) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Generates name for Zip Entries
+     * @param path file or directory path
+     * @return Zip entry name
+     */
+    static String getZipEntryName(Path path) {
+        StringBuilder builder = new StringBuilder();
+        Path normalizedPath = path.normalize();
+        for (int i = 0; i < normalizedPath.getNameCount(); i++) {
+            builder.append(normalizedPath.getName(i));
+            if (i < normalizedPath.getNameCount() -1) builder.append("/");
+        }
+        if (path.toFile().isDirectory()) builder.append("/");
+        return builder.toString();
     }
 }

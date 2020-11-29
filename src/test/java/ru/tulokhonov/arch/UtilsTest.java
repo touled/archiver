@@ -1,6 +1,7 @@
 package ru.tulokhonov.arch;
 
 import org.junit.Test;
+import ru.tulokhonov.arch.exceptions.ExtractionException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -52,12 +53,6 @@ public class UtilsTest {
         assertEquals(unzippedFolderSize, sourceFilesSize);
     }
 
-    @Test
-    public void givenPath_whenRelativize_thenOk() {
-        String path = "/Users/eduard.tulohonov/Dev/Archiver/";
-        assertEquals("/Users/eduard.tulohonov/Dev/Archiver/", Utils.relative(path));
-    }
-
 //    @Test
 //    public void givenFolder_WhenCalculateSize_thenOk() throws IOException {
 //        long folderSize = Utils.getFolderSize(Paths.get("./src/test/resources"));
@@ -69,9 +64,22 @@ public class UtilsTest {
         List<File> sourceFiles = Utils.getFiles(new String[] { "./wrong-file-name" });
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalArgumentException.class)
+    public void givenInvalidName_whenGetFiles_thenError() {
+        Utils.getFiles(new String[] { "../" });
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void givenInvalidInput_whenUnzip_thenError() throws FileNotFoundException {
         InputStream is = new FileInputStream(new File("./src/test/resources/home.txt"));
         Utils.unZip(is);
+    }
+
+    @Test
+    public void givenPaths_whenGetZipEntryNames_thenOk() {
+        String folderName = Utils.getZipEntryName(Paths.get("./src/test/resources"));
+        String fileName = Utils.getZipEntryName(Paths.get("./pom.xml"));
+        assertEquals("src/test/resources/", folderName);
+        assertEquals("pom.xml", fileName);
     }
 }

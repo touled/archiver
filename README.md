@@ -18,7 +18,7 @@ To create zip archive add space-delimited list of files and folders and redirect
 
 Example: 
 
-`$./archiver ./file1 ./file2 ./dir1 > archive.zip`
+`$ ./archiver ./file1 ./file2 ./dir1 > archive.zip`
 
 ### Extract
 
@@ -26,4 +26,4 @@ To extract files from zip file, pipe zip file output to archiver. Files and fold
 
 Example:
 
-`$cat archive.zip | ./archiver`
+`$ cat archive.zip | ./archiver`
