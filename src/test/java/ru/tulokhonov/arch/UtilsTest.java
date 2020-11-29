@@ -31,7 +31,7 @@ public class UtilsTest {
         Files.createDirectories(target.resolve("zipped"));
         Files.createDirectories(target.resolve("unzipped"));
 
-        List<File> sourceFiles = Utils.getFiles(new String[] { "./pom.xml", "/Users/eduard.tulohonov/Downloads/demo" });
+        List<File> sourceFiles = Utils.getFiles(new String[] { "./pom.xml", "./src/test/resources" });
         try (OutputStream fos = new FileOutputStream(target.resolve("zipped/archive.zip").toFile())) {
             Utils.zip(sourceFiles, fos);
         }
