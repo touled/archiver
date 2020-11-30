@@ -22,7 +22,7 @@ Example:
 
 ### Extract
 
-To extract files from zip file, pipe zip file output to archiver. Files and folders will be extracted into the current directory. Files and folders with the same name will be overwritten.
+To extract files from zip file, pipe zip file output to archiver. Files and folders will be extracted into the current directory. Files and folders with the same names will be overwritten.
 
 Example:
 

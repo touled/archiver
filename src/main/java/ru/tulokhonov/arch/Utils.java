@@ -89,7 +89,8 @@ public class Utils {
      * Extracts given Zip file from input stream to specified path
      * @param is Input stream
      * @param path extraction path
-     * @throws ExtractionException if content provided in input stream is not valid zip file or IOException occurs
+     * @throws IllegalArgumentException if content provided in input stream is not valid zip file
+     * @throws ExtractionException if IOException occurs
      */
     public static void unZip(InputStream is, Path path) {
         try (ZipInputStream zis = new ZipInputStream(is)) {
