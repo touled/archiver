@@ -1,29 +1,29 @@
 # Archiver
-Simple Zip archiver. Compresses and extracts files and folders using ZIP compression algorithm.
+Простой архиватор. Архивирует и извлекает файлы и папки из архива с использованием алгоритма Zip.
 
-## Prerequisites
+## Требования
 
 - Java 1.8+
 - Shell
 
-## Usage
+## Использование
 
-1. Clone or download this repository
-2. Run `./mvnw clean package` to compile and package archiver
-2. Make sure archiver is executable `chmod +x ./archiver`
+1. Скачайте репозиторий
+2. Выполните `./mvnw clean package` для компиляции и построения приложения
+2. Убедитесь, что файл `archiver` исполняемый `chmod +x ./archiver`
 
-### Archive
+### Архивация
 
-To create zip archive add space-delimited list of files and folders and redirect output to a zip file.
+Для создания Zip архива к имени выполняемого файла добавьте список файлов и директорий для архивации, а затем перенаправьте вывод в новый zip-файл.
 
-Example: 
+Пример: 
 
 `$ ./archiver ./file1 ./file2 ./dir1 > archive.zip`
 
-### Extract
+### Извлечение
 
-To extract files from zip file, pipe zip file output to archiver. Files and folders will be extracted into the current directory. Files and folders with the same names will be overwritten.
+Для извлечения файлов и папок из zip-файла перенаправьте вывод файла zip архиватору. Данные будут извлечены в текущую папку. Файлы и папки с одинаковыми именами будут перезаписаны.
 
-Example:
+Пример:
 
 `$ cat archive.zip | ./archiver`

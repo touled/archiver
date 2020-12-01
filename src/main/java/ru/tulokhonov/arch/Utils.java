@@ -17,10 +17,10 @@ import static java.util.stream.Collectors.toList;
 
 public class Utils {
     /**
-     * Returns all files or directories as File objects in the specified path
-     * @param path Path to directory
-     * @return List of File objects
-     * @throws RuntimeException if an I/O error occurs when accessing the path
+     * Возвращает список файлов и директорий как объекты File по указанному пути
+     * @param path путь к директории
+     * @return список файлов и директорий
+     * @throws RuntimeException если произошла I/O ошибка доступа по указанному пути
      */
     public static List<File> getAllFilesInDir(String path) {
         try {
@@ -29,15 +29,15 @@ public class Utils {
                     .map(Path::toFile)
                     .collect(toList());
         } catch (IOException exception) {
-            throw new RuntimeException("Error! Cannot return files or directories", exception);
+            throw new RuntimeException("Ошибка. Невозможно список файлов и папок для архивации", exception);
         }
     }
 
     /**
-     * Returns list of Files instances in specified paths
-     * @param paths file paths
-     * @return list of Files instances
-     * @throws IllegalArgumentException if a file or directory does not exist
+     * Ищет файлы и папки по указанным путям. Проверят существуют ли они.
+     * @param paths пути к файлам и папкам
+     * @return список файлов и папок по указанным путям
+     * @throws IllegalArgumentException если файл или папка не существуют
      */
     public static List<File> getFiles(String[] paths) {
         List<File> files = new ArrayList<>();
@@ -45,10 +45,11 @@ public class Utils {
                 File file = new File(path);
                 if (!file.exists())
                     throw new IllegalArgumentException(
-                            String.format("Error! File or directory named \"%s\" does not exists. Please check the name and try again",
+                            String.format("Ошибка! Файл или директория по имени \"%s\" не существует. Пожалуйста, проверьте имя и повторите снова",
                                     file.getName()));
                 if (pathContainsDirTraversal(file.toPath()))
-                    throw new IllegalArgumentException("Illegal file or directory name");
+                    throw new IllegalArgumentException(
+                            String.format("Ошибка! Запрещенное имя папки или директории \"%s\"", file.getName()));
                 if (file.isDirectory())
                     files.addAll(getAllFilesInDir(path));
                 else
@@ -58,10 +59,10 @@ public class Utils {
     }
 
     /**
-     * Generates ZIP file and writes it to output stream
-     * @param files list of files or directories to be zipped
-     * @param outputStream Output stream for zipped data
-     * @throws ArchivingException if an I/O error occurs
+     * Генерирует архив в виде ZIP файла и пишет результат в выходной поток outputStream
+     * @param files список файлов и папок для архивации
+     * @param outputStream выходной поток
+     * @throws ArchivingException при ошибке ввода-вывода
      */
     public static void zip(List<File> files, OutputStream outputStream) {
         try (BufferedOutputStream bos = new BufferedOutputStream(outputStream);
@@ -82,23 +83,23 @@ public class Utils {
                    zos.putNextEntry(new ZipEntry(getZipEntryName(file.toPath())));
             }
         } catch (IOException exception) {
-            throw new ArchivingException("Error creating archive!", exception);
+            throw new ArchivingException("Ошибка создания архива!", exception);
         }
     }
 
     /**
-     * Extracts given Zip file from input stream to specified path
-     * @param is Input stream
-     * @param path extraction path
-     * @throws IllegalArgumentException if content provided in input stream is not valid zip file
-     * @throws ExtractionException if an I/O error occurs
+     * Извлекает данный Zip файл из входного потока в указанный путь
+     * @param is входной поток
+     * @param path путь для разархивации
+     * @throws IllegalArgumentException если контент входного потока inputStream не является правильным Zip файлом или файл пуст
+     * @throws ExtractionException при возникновении ошибки ввода-вывода
      */
     public static void unZip(InputStream is, Path path) {
         try (ZipInputStream zis = new ZipInputStream(is)) {
             ZipEntry zipEntry = zis.getNextEntry();
 
             if (zipEntry == null)
-                throw new IllegalArgumentException("Error! Invalid or empty zip file");
+                throw new IllegalArgumentException("Ошибка! Неверный или пустой файл Zip");
 
             while (zipEntry != null) {
                 slipProtect(zipEntry, path);
@@ -118,47 +119,47 @@ public class Utils {
                             fos.write(buffer, 0, bytesRead);
                         }
                     } catch (IOException exception) {
-                        throw new ExtractionException("Error extracting file", exception);
+                        throw new ExtractionException("Ошибка извлечения данных!", exception);
                     }
                 }
                 zipEntry = zis.getNextEntry();
             }
         }
         catch (IOException exception) {
-            throw new ExtractionException("Error extracting file!", exception);
+            throw new ExtractionException("Ошибка извлечения данных!", exception);
         }
     }
 
     /**
-     * Protects against malicious zip files
+     * Проверяет запись из Zip файла на наличие запрещенных символов перехода директорий "..", которые могут привести к извлечению данных вне указанного пути
      * @see "https://snyk.io/research/zip-slip-vulnerability"
      *
-     * @param zipEntry ZipEntry
-     * @param target Extraction path
-     * @throws IOException if malicious zip entry detected
+     * @param zipEntry ZipEntry запись из файла Zip
+     * @param target путь для извлечения
+     * @throws IOException если в результате извлечения файл мог быть записан вне пути для извлечения
      */
     static void slipProtect(ZipEntry zipEntry, Path target) throws IOException {
         String canonicalDestinationDirPath = target.toFile().getCanonicalPath();
         File destinationFile = new File(target.toFile(), zipEntry.getName());
         String canonicalDestinationFile = destinationFile.getCanonicalPath();
         if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
-            throw new IOException("Error! Invalid entry in zip file: " + zipEntry.getName());
+            throw new IOException("Ошибка! Неверная запись в файле Zip: " + zipEntry.getName());
         }
     }
 
     /**
-     * Unzip data to current directory
-     * @param is Input stream
+     * Извлекает данные из входного потока в текущий путь
+     * @param is входной поток
      */
     public static void unZip(InputStream is) {
         unZip(is, Paths.get("./"));
     }
 
     /**
-     * Returns folder size in bytes
-     * @param folder Path to the folder
-     * @return folder size in bytes
-     * @throws IOException if an I/O error occurs when accessing the folder
+     * Считает размер всех файлов в папке
+     * @param folder путь к папке
+     * @return размер файлов в папке в байтах
+     * @throws IOException при возникновении ошибки ввода-вывода при обращении к папке
      */
     static long getFolderSize(Path folder) throws IOException {
         return Files.walk(folder)
@@ -168,9 +169,9 @@ public class Utils {
     }
 
     /**
-     * Check if path contains directory traversal signs
-     * @param path Path to check
-     * @return true if path contains directory traversal signs or false otherwise
+     * Проверяет содержит ли путь знаки перехода вверх ".."
+     * @param path путь для проверки
+     * @return да, если содержит, иначе возвращает false
      */
     static boolean pathContainsDirTraversal(Path path) {
         for (int i = 0; i < path.getNameCount(); i++) {
@@ -180,9 +181,9 @@ public class Utils {
     }
 
     /**
-     * Generates name for Zip Entries
-     * @param path file or directory path
-     * @return Zip entry name
+     * Генерирует имя для записей в Zip файле (ZipEntries)
+     * @param path путь к файлу или папке
+     * @return имя для записи Zip файла
      */
     static String getZipEntryName(Path path) {
         StringBuilder builder = new StringBuilder();
