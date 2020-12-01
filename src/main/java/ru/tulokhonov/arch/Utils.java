@@ -18,8 +18,9 @@ import static java.util.stream.Collectors.toList;
 public class Utils {
     /**
      * Returns all files or directories as File objects in the specified path
-     * @param path Path string
+     * @param path Path to directory
      * @return List of File objects
+     * @throws RuntimeException if an I/O error occurs when accessing the path
      */
     public static List<File> getAllFilesInDir(String path) {
         try {
@@ -33,10 +34,10 @@ public class Utils {
     }
 
     /**
-     * Returns list of Files instances by their paths
-     * @param paths file paths from command line arguments
+     * Returns list of Files instances in specified paths
+     * @param paths file paths
      * @return list of Files instances
-     * @throws IllegalArgumentException if a file or directory doesn't exists
+     * @throws IllegalArgumentException if a file or directory does not exist
      */
     public static List<File> getFiles(String[] paths) {
         List<File> files = new ArrayList<>();
@@ -59,8 +60,8 @@ public class Utils {
     /**
      * Generates ZIP file and writes it to output stream
      * @param files list of files or directories to be zipped
-     * @param outputStream Output stream
-     * @throws ArchivingException if IOException occurs
+     * @param outputStream Output stream for zipped data
+     * @throws ArchivingException if an I/O error occurs
      */
     public static void zip(List<File> files, OutputStream outputStream) {
         try (BufferedOutputStream bos = new BufferedOutputStream(outputStream);
@@ -90,7 +91,7 @@ public class Utils {
      * @param is Input stream
      * @param path extraction path
      * @throws IllegalArgumentException if content provided in input stream is not valid zip file
-     * @throws ExtractionException if IOException occurs
+     * @throws ExtractionException if an I/O error occurs
      */
     public static void unZip(InputStream is, Path path) {
         try (ZipInputStream zis = new ZipInputStream(is)) {
@@ -157,7 +158,7 @@ public class Utils {
      * Returns folder size in bytes
      * @param folder Path to the folder
      * @return folder size in bytes
-     * @throws IOException if an I/O error is thrown when accessing the the folder.
+     * @throws IOException if an I/O error occurs when accessing the folder
      */
     static long getFolderSize(Path folder) throws IOException {
         return Files.walk(folder)
@@ -168,7 +169,7 @@ public class Utils {
 
     /**
      * Check if path contains directory traversal signs
-     * @param path Path
+     * @param path Path to check
      * @return true if path contains directory traversal signs or false otherwise
      */
     static boolean pathContainsDirTraversal(Path path) {
