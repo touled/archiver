@@ -20,7 +20,15 @@ public class App
             );
     }
 
+    /**
+     * Класс перехвата исключений unhandled exceptions
+     */
     static class Handler implements Thread.UncaughtExceptionHandler {
+        /**
+         * Выводит сообщение об ошибке
+         * @param t текущий thread
+         * @param e перехваченное исключение
+         */
         public void uncaughtException(Thread t, Throwable e) {
             System.err.println(e.getMessage());
         }

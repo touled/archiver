@@ -29,15 +29,15 @@ public class Utils {
                     .map(Path::toFile)
                     .collect(toList());
         } catch (IOException exception) {
-            throw new RuntimeException("Ошибка. Невозможно список файлов и папок для архивации", exception);
+            throw new RuntimeException("Ошибка. Невозможно вывести список файлов и папок для архивации", exception);
         }
     }
 
     /**
      * Ищет файлы и папки по указанным путям. Проверят существуют ли они.
      * @param paths пути к файлам и папкам
-     * @return список файлов и папок по указанным путям
-     * @throws IllegalArgumentException если файл или папка не существуют
+     * @return список файлов и папок по указанным путям в виде объектов File
+     * @throws IllegalArgumentException если файл или папка не существуют или путь к файлу или папке содержит запрещенные символы
      */
     public static List<File> getFiles(String[] paths) {
         List<File> files = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Utils {
     }
 
     /**
-     * Генерирует архив в виде ZIP файла и пишет результат в выходной поток outputStream
+     * Генерирует архив в виде выходного потока в формате ZIP и пишет результат в outputStream
      * @param files список файлов и папок для архивации
      * @param outputStream выходной поток
      * @throws ArchivingException при ошибке ввода-вывода
@@ -88,7 +88,7 @@ public class Utils {
     }
 
     /**
-     * Извлекает данный Zip файл из входного потока в указанный путь
+     * Извлекает данные Zip из входного потока в указанный путь
      * @param is входной поток
      * @param path путь для разархивации
      * @throws IllegalArgumentException если контент входного потока inputStream не является правильным Zip файлом или файл пуст
@@ -142,13 +142,14 @@ public class Utils {
         String canonicalDestinationDirPath = target.toFile().getCanonicalPath();
         File destinationFile = new File(target.toFile(), zipEntry.getName());
         String canonicalDestinationFile = destinationFile.getCanonicalPath();
+
         if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
             throw new IOException("Ошибка! Неверная запись в файле Zip: " + zipEntry.getName());
         }
     }
 
     /**
-     * Извлекает данные из входного потока в текущий путь
+     * Извлекает данные Zip из входного потока в текущий путь
      * @param is входной поток
      */
     public static void unZip(InputStream is) {

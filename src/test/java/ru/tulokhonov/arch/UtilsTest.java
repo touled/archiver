@@ -39,11 +39,11 @@ public class UtilsTest {
         File zipFile = new File(target.resolve("zipped/archive.zip").toUri());
         assertTrue(zipFile.exists());
 
-        // Now trying to unzip the file
+        // Извлечение файла из архива
         try (FileInputStream fis = new FileInputStream(zipFile)) {
             Utils.unZip(fis, target.resolve("unzipped"));
         }
-        // Comparing file sizes
+        // Сравнение размера папки с распакованными файлами с размером исходных файлов
         long unzippedFolderSize = Utils.getFolderSize(target.resolve("unzipped"));
         long sourceFilesSize = sourceFiles
                 .stream()
@@ -52,12 +52,6 @@ public class UtilsTest {
                 .sum();
         assertEquals(unzippedFolderSize, sourceFilesSize);
     }
-
-//    @Test
-//    public void givenFolder_WhenCalculateSize_thenOk() throws IOException {
-//        long folderSize = Utils.getFolderSize(Paths.get("./src/test/resources"));
-//        assertEquals(1000173L, folderSize);
-//    }
 
     @Test(expected = IllegalArgumentException.class)
     public void givenWrongFile_whenGetFiles_thenError() {
@@ -82,4 +76,10 @@ public class UtilsTest {
         assertEquals("src/test/resources/", folderName);
         assertEquals("pom.xml", fileName);
     }
+
+//    @Test
+//    public void givenFolder_WhenCalculateSize_thenOk() throws IOException {
+//        long folderSize = Utils.getFolderSize(Paths.get("./src/test/resources"));
+//        assertEquals(1000173L, folderSize);
+//    }
 }

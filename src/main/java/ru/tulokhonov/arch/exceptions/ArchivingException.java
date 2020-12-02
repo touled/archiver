@@ -1,8 +1,10 @@
 package ru.tulokhonov.arch.exceptions;
 
+/**
+ * Исключение архивации
+ */
 public class ArchivingException extends RuntimeException {
-    public ArchivingException() {
-    }
+    public ArchivingException() {}
 
     public ArchivingException(String message) {
         super(message);
